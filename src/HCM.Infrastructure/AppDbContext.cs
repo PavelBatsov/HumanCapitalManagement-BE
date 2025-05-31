@@ -1,4 +1,6 @@
 ﻿using HCM.Domain.Entities;
+using HCM.Domain.Entities.Identity;
+using HCM.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace HCM.Infrastructure
@@ -11,8 +13,14 @@ namespace HCM.Infrastructure
 
         public DbSet<UserEntity> Users { get; set; }
 
+        public DbSet<RoleEntity> Roles { get; set; }
+
+        public DbSet<UserRoleEntity> UserRoles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new UserRoleConfigurations());
+
             base.OnModelCreating(builder);
         }
     }
