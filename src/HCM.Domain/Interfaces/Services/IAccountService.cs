@@ -3,5 +3,7 @@
     public interface IAccountService
     {
         Task Login();
+
+        Task Register();
     }
 }

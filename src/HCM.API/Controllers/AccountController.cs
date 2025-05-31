@@ -20,5 +20,10 @@ namespace HCM.API.Controllers
         [HttpPost(RoutingConstants.Action)]
         public async Task Login()
            => await accountService.Login();
+
+        [AllowAnonymous]
+        [HttpPost(RoutingConstants.Action)]
+        public async Task Register()
+           => await accountService.Register();
     }
 }
