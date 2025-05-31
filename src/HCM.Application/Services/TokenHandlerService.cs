@@ -3,7 +3,6 @@ using HCM.Domain.Entities;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Models.Identity;
-using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -79,12 +78,14 @@ namespace HCM.Application.Services
 
         private async Task<ClaimsIdentity> GetClaimsAsync(UserEntity user)
         {
+            var userRole = await this.userRepository.GetUserRoleAsync(user.Id);
+
             var claimsIdentity = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
-                //new Claim(ClaimTypes.Role, userRole.Name)
+                new Claim(ClaimTypes.Role, userRole.Name)
             });
 
             return claimsIdentity;
