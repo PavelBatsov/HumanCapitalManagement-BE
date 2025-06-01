@@ -1,5 +1,7 @@
 ﻿using HCM.Domain.Constants;
 using HCM.Domain.Interfaces.Services;
+using HCM.Domain.Models.Identity;
+using HCM.Domain.ViewModels.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +20,17 @@ namespace HCM.API.Controllers
 
         [AllowAnonymous]
         [HttpPost(RoutingConstants.Action)]
-        public async Task Login()
-           => await accountService.Login();
+        public async Task<LoginViewModel> Login(LoginModel model)
+           => await accountService.LoginAsync(model);
 
         [AllowAnonymous]
         [HttpPost(RoutingConstants.Action)]
-        public async Task Register()
-           => await accountService.Register();
+        public async Task Register(UserModel model)
+           => await accountService.RegisterAsync(model);
+
+        [Authorize(Policy = RoleConstants.Admin)]
+        [HttpPost(RoutingConstants.Action)]
+        public async Task<UserViewModel> UpdateAccount(UserModel model)
+           => await accountService.UpdateAccountAsync(model);
     }
 }

@@ -16,6 +16,17 @@ namespace HCM.Infrastructure.Repositories
             this.context = context;
         }
 
+        public async Task<UserEntity> GetUserByEmailAsync(string email)
+        {
+            var user = await context.Set<UserEntity>()
+                .AsNoTracking()
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Email == email);
+
+            return user;
+        }
+
         public async Task<RoleModel> GetUserRoleAsync(Guid userId)
         {
             var appRole = await context.Set<RoleEntity>()
@@ -39,6 +50,15 @@ namespace HCM.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
 
             return appRole;
+        }
+
+        public async Task<bool> IsUserExistsAsync(string email)
+        {
+            var isUserExist = await context.Set<UserEntity>()
+                .AsNoTracking()
+                .AnyAsync(x => x.Email == email);
+
+            return isUserExist;
         }
     }
 }

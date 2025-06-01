@@ -1,12 +1,15 @@
 ﻿using HCM.Application.Services;
 using HCM.Domain.Configurations;
+using HCM.Domain.Constants;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
 using HCM.Infrastructure;
 using HCM.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace HCM.API.Configurations
@@ -17,7 +20,8 @@ namespace HCM.API.Configurations
         {
             AddDbContext(services, configuration);
             Configurations(services, configuration);
-            ConfigurationAuthentication(services, configuration);
+            ConfigureAuthentication(services, configuration);
+            ConfigureAuthorization(services);
             RegisterServices(services);
             RegisterRepositories(services);
         }
@@ -34,7 +38,7 @@ namespace HCM.API.Configurations
             services.Configure<AuthenticationConfiguration>(configuration.GetSection(nameof(AuthenticationConfiguration)));
         }
 
-        private static void ConfigurationAuthentication(IServiceCollection services, IConfiguration configuration)
+        private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
         {
             var authenticationConfiguration = configuration
                 .GetSection(nameof(AuthenticationConfiguration))
@@ -62,6 +66,21 @@ namespace HCM.API.Configurations
                         ClockSkew = TimeSpan.Zero,
                     };
                 });
+        }
+
+        private static void ConfigureAuthorization(IServiceCollection services)
+        {
+            services.Configure<AuthorizationOptions>(options =>
+            {
+                options.AddPolicy(RoleConstants.Admin, policy =>
+                    policy.RequireClaim(ClaimTypes.Role, RoleConstants.Admin));
+
+                options.AddPolicy(RoleConstants.Manager, policy =>
+                    policy.RequireClaim(ClaimTypes.Role, RoleConstants.Admin, RoleConstants.Manager));
+
+                options.AddPolicy(RoleConstants.Employee, policy =>
+                    policy.RequireClaim(ClaimTypes.Role, RoleConstants.Admin, RoleConstants.Manager, RoleConstants.Employee));
+            });
         }
 
         public static void RegisterServices(IServiceCollection services)
