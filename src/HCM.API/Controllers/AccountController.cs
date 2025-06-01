@@ -32,5 +32,15 @@ namespace HCM.API.Controllers
         [HttpPost(RoutingConstants.Action)]
         public async Task<UserViewModel> UpdateAccount(UserModel model)
            => await accountService.UpdateAccountAsync(model);
+
+        [Authorize(Policy = RoleConstants.Employee)]
+        [HttpPost(RoutingConstants.Action)]
+        public async Task<TokenModel> RefreshToken(RefreshTokenModel model)
+            => await accountService.RefreshTokenAsync(model);
+
+        [Authorize(Policy = RoleConstants.Employee)]
+        [HttpPost(RoutingConstants.Action)]
+        public async Task Logout(RefreshTokenModel model)
+            => await accountService.LogoutAsync(model);
     }
 }

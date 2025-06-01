@@ -13,6 +13,8 @@ namespace HCM.Infrastructure
 
         public DbSet<UserEntity> Users { get; set; }
 
+        public DbSet<UserTokenEntity> UserTokens { get; set; }
+
         public DbSet<RoleEntity> Roles { get; set; }
 
         public DbSet<UserRoleEntity> UserRoles { get; set; }

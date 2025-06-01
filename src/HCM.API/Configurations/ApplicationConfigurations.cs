@@ -92,6 +92,7 @@ namespace HCM.API.Configurations
         public static void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
         }
     }
 }

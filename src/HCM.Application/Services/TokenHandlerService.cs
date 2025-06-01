@@ -1,8 +1,11 @@
 ﻿using HCM.Domain.Configurations;
 using HCM.Domain.Entities;
+using HCM.Domain.Entities.Identity;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
+using HCM.Domain.Localization;
 using HCM.Domain.Models.Identity;
+using HCM.Domain.ViewModels.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,28 +18,60 @@ namespace HCM.Application.Services
     public class TokenHandlerService : ITokenHandlerService
     {
         private readonly IUserRepository userRepository;
+        private readonly IUserTokenRepository userTokenRepository;
         private readonly AuthenticationConfiguration authenticationConfiguration;
 
         public TokenHandlerService(
             IUserRepository userRepository,
-            IOptions<AuthenticationConfiguration> authenticationConfiguration)
+            IOptions<AuthenticationConfiguration> authenticationConfiguration,
+            IUserTokenRepository userTokenRepository)
         {
             this.userRepository = userRepository;
             this.authenticationConfiguration = authenticationConfiguration.Value;
+            this.userTokenRepository = userTokenRepository;
         }
 
-        public async Task<TokenModel> GenerateTokenAsync(UserEntity applicationUser)
+        public async Task<TokenModel> GenerateTokenAsync(UserEntity user)
         {
             var token = new TokenModel
             {
-                AccessToken = await CreateAccessToken(applicationUser),
+                AccessToken = await CreateAccessToken(user),
                 RefreshToken = CreateRefreshToken(),
                 RefreshTokenExpiredAt = DateTime.UtcNow.AddSeconds(authenticationConfiguration.RefreshTokenExpiration)
             };
 
-            // TODO Store in Db or Redis cache
+            // Usually we store the token in cache like Redis
+            await StoreTokenInDatabaseAsync(user.Id, token.RefreshToken, token.RefreshTokenExpiredAt);
 
             return token;
+        }
+
+        public async Task RevokeRefreshTokenAsync(RefreshTokenModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.RefreshToken))
+            {
+                throw new Exception(Strings.EmptyRefreshToken);
+            }
+
+            var userToken = await userTokenRepository.GetRefreshTokenAsync(model.RefreshToken);
+
+            if (string.IsNullOrWhiteSpace(model.RefreshToken))
+            {
+                throw new Exception(Strings.EmptyRefreshToken);
+            }
+
+            userTokenRepository.Delete(userToken);
+            await userTokenRepository.SaveAsync();
+        }
+
+        public async Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model)
+        {
+            await RevokeRefreshTokenAsync(model);
+
+            var user = await userRepository.GetAsync(model.UserId)
+                ?? throw new Exception(Strings.UserNotFound);
+
+            return await GenerateTokenAsync(user);
         }
 
         private async Task<string> CreateAccessToken(UserEntity user)
@@ -89,6 +124,19 @@ namespace HCM.Application.Services
             });
 
             return claimsIdentity;
+        }
+
+        private async Task StoreTokenInDatabaseAsync(Guid userId, string refreshToken, DateTime expiredAt)
+        {
+            var userToken = new UserTokenEntity
+            {
+                UserId = userId,
+                RefreshToken = refreshToken,
+                RefreshTokenExpiredAt = expiredAt
+            };
+
+            await userTokenRepository.AddAsync(userToken);
+            await userTokenRepository.SaveAsync();
         }
     }
 }

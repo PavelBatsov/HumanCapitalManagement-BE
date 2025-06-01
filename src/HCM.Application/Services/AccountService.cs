@@ -6,7 +6,6 @@ using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Localization;
 using HCM.Domain.Models.Identity;
 using HCM.Domain.ViewModels.Identity;
-using System.Security.Cryptography;
 
 namespace HCM.Application.Services
 {
@@ -78,7 +77,9 @@ namespace HCM.Application.Services
                         UserId = userId,
                         RoleId = model.RoleId
                     }
-                ]
+                ],
+                CreatedById = userId,
+                CreatedOn = DateTime.UtcNow
             };
 
             await userRepository.AddAsync(user);
@@ -88,6 +89,16 @@ namespace HCM.Application.Services
         public async Task<UserViewModel> UpdateAccountAsync(UserModel model)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task LogoutAsync(RefreshTokenModel model)
+        {
+            await tokenHandlerService.RevokeRefreshTokenAsync(model);
+        }
+
+        public async Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model)
+        {
+            return await tokenHandlerService.RefreshTokenAsync(model);
         }
     }
 }

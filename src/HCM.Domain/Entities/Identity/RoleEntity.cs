@@ -1,6 +1,6 @@
 ﻿namespace HCM.Domain.Entities.Identity
 {
-    public class RoleEntity : EntityBase
+    public class RoleEntity : EntityBase<RoleEntity>
     {
         public string Name { get; set; }
 

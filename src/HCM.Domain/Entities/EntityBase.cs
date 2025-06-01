@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HCM.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace HCM.Domain.Entities
 {
-    public class EntityBase
+    public class EntityBase<TEntity> : IEntityBase
+        where TEntity : class
     {
         [Key]
         public Guid Id { get; set; }

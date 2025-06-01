@@ -61,6 +61,15 @@ namespace HCM.Domain.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Refresh token is empty..
+        /// </summary>
+        public static string EmptyRefreshToken {
+            get {
+                return ResourceManager.GetString("EmptyRefreshToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Credentials are invalid..
         /// </summary>
         public static string InvalidCredentials {

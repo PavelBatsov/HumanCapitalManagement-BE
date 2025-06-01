@@ -10,5 +10,9 @@ namespace HCM.Domain.Interfaces.Services
         Task RegisterAsync(UserModel model);
 
         Task<UserViewModel> UpdateAccountAsync(UserModel model);
+
+        Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model);
+
+        Task LogoutAsync(RefreshTokenModel model);
     }
 }
