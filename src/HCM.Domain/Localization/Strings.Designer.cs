@@ -61,6 +61,15 @@ namespace HCM.Domain.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find User role..
+        /// </summary>
+        public static string CannotFindUserRole {
+            get {
+                return ResourceManager.GetString("CannotFindUserRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Refresh token is empty..
         /// </summary>
         public static string EmptyRefreshToken {

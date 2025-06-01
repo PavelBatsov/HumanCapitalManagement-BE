@@ -5,7 +5,6 @@ using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Localization;
 using HCM.Domain.Models.Identity;
-using HCM.Domain.ViewModels.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -55,7 +54,7 @@ namespace HCM.Application.Services
 
             var userToken = await userTokenRepository.GetRefreshTokenAsync(model.RefreshToken);
 
-            if (string.IsNullOrWhiteSpace(model.RefreshToken))
+            if (string.IsNullOrWhiteSpace(userToken.RefreshToken))
             {
                 throw new Exception(Strings.EmptyRefreshToken);
             }
@@ -80,7 +79,6 @@ namespace HCM.Application.Services
             var singingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
             var accessTokenExpiredAt = DateTime.UtcNow.AddSeconds(authenticationConfiguration.AccessTokenExpiration);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = await GetClaimsAsync(user),
@@ -91,6 +89,7 @@ namespace HCM.Application.Services
                 SigningCredentials = singingCredentials
             };
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var encryptedToken = tokenHandler.WriteToken(securityToken);
 
@@ -113,15 +112,16 @@ namespace HCM.Application.Services
 
         private async Task<ClaimsIdentity> GetClaimsAsync(UserEntity user)
         {
-            var userRole = await this.userRepository.GetUserRoleAsync(user.Id);
+            var userRole = await this.userRepository.GetUserRoleAsync(user.Id)
+                ?? throw new Exception(Strings.CannotFindUserRole);
 
-            var claimsIdentity = new ClaimsIdentity(new[]
-            {
+            var claimsIdentity = new ClaimsIdentity(
+            [
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, userRole.Name)
-            });
+            ]);
 
             return claimsIdentity;
         }
