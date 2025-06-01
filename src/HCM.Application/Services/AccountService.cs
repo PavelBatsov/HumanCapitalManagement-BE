@@ -1,10 +1,12 @@
 ﻿using HCM.Domain.Entities;
 using HCM.Domain.Entities.Identity;
+using HCM.Domain.Helpers;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Localization;
 using HCM.Domain.Models.Identity;
 using HCM.Domain.ViewModels.Identity;
+using System.Security.Cryptography;
 
 namespace HCM.Application.Services
 {
@@ -23,9 +25,15 @@ namespace HCM.Application.Services
 
         public async Task<LoginViewModel> LoginAsync(LoginModel model)
         {
-            var user = await userRepository.GetUserByEmailAsync(model.Email);
+            var user = await userRepository.GetUserByEmailAsync(model.Email)
+                ?? throw new Exception(Strings.UserNotFound);
 
-            // TODO Check Pass
+            var isPasswordValid = PasswordHelper.VerifyPassword(model.Password, user.Password);
+
+            if (!isPasswordValid)
+            {
+                throw new Exception(Strings.InvalidCredentials);
+            }
 
             var token = tokenHandlerService.GenerateTokenAsync(user);
             var userViewModel = new UserViewModel
@@ -62,7 +70,7 @@ namespace HCM.Application.Services
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Password = model.Password, // TODO: Hash password
+                Password = PasswordHelper.HashPassword(model.Password),
                 Roles =
                 [
                     new UserRoleEntity

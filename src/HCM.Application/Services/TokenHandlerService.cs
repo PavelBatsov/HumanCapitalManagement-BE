@@ -64,12 +64,12 @@ namespace HCM.Application.Services
 
         private static string CreateRefreshToken()
         {
-            var randomNumber = new byte[32];
-            using var randomNumberGenerator = RandomNumberGenerator.Create();
-            randomNumberGenerator.GetBytes(randomNumber);
-            var generatedRandomNumber = Convert.ToBase64String(randomNumber);
+            byte[] salt = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
 
-            var salt = generatedRandomNumber;
             var secret = Guid.NewGuid().ToString();
             var byteArr = Encoding.ASCII.GetBytes(salt + secret);
 
