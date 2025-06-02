@@ -9,7 +9,7 @@ namespace HCM.API.Controllers
 {
     [ApiController]
     [Route(RoutingConstants.Controller)]
-    public class AccountController
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService accountService;
 

@@ -36,6 +36,7 @@ namespace HCM.API.Configurations
         private static void Configurations(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AuthenticationConfiguration>(configuration.GetSection(nameof(AuthenticationConfiguration)));
+            services.Configure<UserConfiguration>(configuration.GetSection(nameof(UserConfiguration)));
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
