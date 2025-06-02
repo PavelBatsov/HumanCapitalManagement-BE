@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36121.58 d17.14
+VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCM.API", "HCM.API\HCM.API.csproj", "{0DC19AE0-64E4-41DF-BB13-CEB534AC0973}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCM.Infrastructure", "HCM.Infrastructure\HCM.Infrastructure.csproj", "{8432F186-6AFE-41BD-A16A-CE520FFC5CDD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCM.Domain", "HCM.Domain\HCM.Domain.csproj", "{0721093C-FA5E-4F79-B680-82120B62A38E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCP.Tests", "HCP.Tests\HCP.Tests.csproj", "{AB57345E-5C74-4123-B453-34E68341B705}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{0721093C-FA5E-4F79-B680-82120B62A38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0721093C-FA5E-4F79-B680-82120B62A38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0721093C-FA5E-4F79-B680-82120B62A38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB57345E-5C74-4123-B453-34E68341B705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB57345E-5C74-4123-B453-34E68341B705}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB57345E-5C74-4123-B453-34E68341B705}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB57345E-5C74-4123-B453-34E68341B705}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
