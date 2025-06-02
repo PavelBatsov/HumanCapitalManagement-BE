@@ -19,9 +19,14 @@ namespace HCM.Infrastructure
 
         public DbSet<UserRoleEntity> UserRoles { get; set; }
 
+        public DbSet<ManagerEntity> Managers { get; set; }
+
+        public DbSet<EmployeeEntity> Employees { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new UserRoleConfigurations());
+            builder.ApplyConfiguration(new ManagerConfigurations());
 
             base.OnModelCreating(builder);
         }
