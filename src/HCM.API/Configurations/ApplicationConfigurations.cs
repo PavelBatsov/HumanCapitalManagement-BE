@@ -1,6 +1,8 @@
 ﻿using HCM.Application.Services;
 using HCM.Domain.Configurations;
 using HCM.Domain.Constants;
+using HCM.Domain.Helpers;
+using HCM.Domain.Interfaces;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
 using HCM.Infrastructure;
@@ -86,14 +88,21 @@ namespace HCM.API.Configurations
 
         public static void RegisterServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+            services.AddScoped<IManagerService, ManagerService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IUserHelper, UserHelper>();
         }
 
         public static void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IManagerRepository, ManagerRepository>();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using HCM.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace HCM.Domain.Helpers
 {
-    public class UserHelper
+    public class UserHelper : IUserHelper
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 

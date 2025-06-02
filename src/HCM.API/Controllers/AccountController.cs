@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HCM.API.Controllers
 {
     [ApiController]
+    [Authorize(Policy = RoleConstants.Admin)]
     [Route(RoutingConstants.Controller)]
     public class AccountController : ControllerBase
     {
@@ -28,17 +29,14 @@ namespace HCM.API.Controllers
         public async Task Register(UserModel model)
            => await accountService.RegisterAsync(model);
 
-        [Authorize(Policy = RoleConstants.Admin)]
         [HttpPost(RoutingConstants.Action)]
         public async Task<UserViewModel> UpdateAccount(UserModel model)
            => await accountService.UpdateAccountAsync(model);
 
-        [Authorize(Policy = RoleConstants.Employee)]
         [HttpPost(RoutingConstants.Action)]
         public async Task<TokenModel> RefreshToken(RefreshTokenModel model)
             => await accountService.RefreshTokenAsync(model);
 
-        [Authorize(Policy = RoleConstants.Employee)]
         [HttpPost(RoutingConstants.Action)]
         public async Task Logout(RefreshTokenModel model)
             => await accountService.LogoutAsync(model);

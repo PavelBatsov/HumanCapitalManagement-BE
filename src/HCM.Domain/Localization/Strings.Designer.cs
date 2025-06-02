@@ -70,6 +70,24 @@ namespace HCM.Domain.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Employee already exist..
+        /// </summary>
+        public static string EmployeeAlreadyExists {
+            get {
+                return ResourceManager.GetString("EmployeeAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Employee with that email: {0} already exist..
+        /// </summary>
+        public static string EmployeeWithThatEmailExist {
+            get {
+                return ResourceManager.GetString("EmployeeWithThatEmailExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Refresh token is empty..
         /// </summary>
         public static string EmptyRefreshToken {
@@ -84,6 +102,33 @@ namespace HCM.Domain.Localization {
         public static string InvalidCredentials {
             get {
                 return ResourceManager.GetString("InvalidCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manager already exist..
+        /// </summary>
+        public static string ManagerAlreadyExists {
+            get {
+                return ResourceManager.GetString("ManagerAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Manager was not found..
+        /// </summary>
+        public static string ManagerNotFound {
+            get {
+                return ResourceManager.GetString("ManagerNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manager with that email: {0} already exist..
+        /// </summary>
+        public static string ManagerWithThatEmailExist {
+            get {
+                return ResourceManager.GetString("ManagerWithThatEmailExist", resourceCulture);
             }
         }
         

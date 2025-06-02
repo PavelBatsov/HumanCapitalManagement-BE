@@ -5,16 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HCM.Domain.Entities
 {
-    public class EmployeeEntity
+    public class EmployeeEntity : TrackableEntity<EmployeeEntity>
     {
         [Required]
         [EmailAddress]
         [MaxLength(EmployeeConstraints.EmailMaxLength)]
         public string Email { get; set; }
-
-        [Required]
-        [MaxLength(EmployeeConstraints.PasswordMaxLength)]
-        public string Password { get; set; }
 
         [Required]
         [MaxLength(EmployeeConstraints.FirstNameMaxLength)]
@@ -38,6 +34,6 @@ namespace HCM.Domain.Entities
         public Guid ManagerId { get; set; }
 
         [ForeignKey(nameof(ManagerId))]
-        public ManagerEntity Manager { get; set; }
+        public virtual ManagerEntity Manager { get; set; }
     }
 }

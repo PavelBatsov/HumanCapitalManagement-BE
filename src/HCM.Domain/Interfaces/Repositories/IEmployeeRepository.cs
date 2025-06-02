@@ -2,8 +2,8 @@
 
 namespace HCM.Domain.Interfaces.Repositories
 {
-    public interface IManagerRepository : IGenericRepository<ManagerEntity>
+    public interface IEmployeeRepository : IGenericRepository<EmployeeEntity>
     {
-
+        
     }
 }
