@@ -14,10 +14,8 @@ namespace HCM.API.Controllers
     {
         private readonly IAccountService accountService;
 
-        public AccountController(IAccountService accountService)
-        {
-            this.accountService = accountService;
-        }
+        public AccountController(IAccountService accountService) 
+            => this.accountService = accountService;
 
         [AllowAnonymous]
         [HttpPost(RoutingConstants.Action)]
@@ -33,6 +31,7 @@ namespace HCM.API.Controllers
         public async Task<UserViewModel> UpdateAccount(UserModel model)
            => await accountService.UpdateAccountAsync(model);
 
+        [AllowAnonymous]
         [HttpPost(RoutingConstants.Action)]
         public async Task<TokenModel> RefreshToken(RefreshTokenModel model)
             => await accountService.RefreshTokenAsync(model);

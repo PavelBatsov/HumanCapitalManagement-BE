@@ -15,26 +15,24 @@ namespace HCM.API.Controllers
         private readonly IEmployeeService employeeService;
 
         public EmployeeController(IEmployeeService employeeService)
-        {
-            this.employeeService = employeeService;
-        }
+            => this.employeeService = employeeService;
 
         [Authorize(Policy = RoleConstants.Manager)]
         [HttpPost(RoutingConstants.Action)]
-        public async Task Create(EmployeeModel model)
+        public async Task Create([FromForm] EmployeeModel model)
             => await employeeService.CreateAsync(model);
 
         [Authorize(Policy = RoleConstants.Manager)]
-        [HttpPost(RoutingConstants.Action)]
-        public async Task<EmployeeViewModel> Update(EmployeeModel model)
+        [HttpPut(RoutingConstants.Action)]
+        public async Task<EmployeeViewModel> Update([FromForm] EmployeeModel model)
             => await employeeService.UpdateAsync(model);
 
         [Authorize(Policy = RoleConstants.Manager)]
-        [HttpDelete(RoutingConstants.Action)]
-        public async Task Delete([FromBody] EmployeeModel model)
-            => await employeeService.DeleteAsync(model.Id);
+        [HttpDelete(RoutingConstants.ActionId)]
+        public async Task Delete([FromRoute] Guid id)
+            => await employeeService.DeleteAsync(id);
 
-        [HttpPost(RoutingConstants.Action)]
+        [HttpGet(RoutingConstants.Action)]
         public async Task<IEnumerable<EmployeeViewModel>> GetAll()
             => await employeeService.GetAllAsync();
     }

@@ -13,27 +13,26 @@ namespace HCM.API.Controllers
     public class ManagerController : ControllerBase
     {
         private readonly IManagerService managerService;
+
         public ManagerController(IManagerService managerService)
-        {
-            this.managerService = managerService;
-        }
+            => this.managerService = managerService;
 
         [Authorize(Policy = RoleConstants.Admin)]
         [HttpPost(RoutingConstants.Action)]
-        public async Task Create(ManagerModel model)
+        public async Task Create([FromForm] ManagerModel model)
             => await managerService.CreateAsync(model);
 
         [Authorize(Policy = RoleConstants.Admin)]
-        [HttpPost(RoutingConstants.Action)]
-        public async Task<ManagerViewModel> Update(ManagerModel model)
+        [HttpPut(RoutingConstants.Action)]
+        public async Task<ManagerViewModel> Update([FromForm] ManagerModel model)
             => await managerService.UpdateAsync(model);
 
         [Authorize(Policy = RoleConstants.Admin)]
-        [HttpDelete(RoutingConstants.Action)]
-        public async Task Delete([FromBody] ManagerModel model)
-            => await managerService.DeleteAsync(model.Id);
+        [HttpDelete(RoutingConstants.ActionId)]
+        public async Task Delete([FromRoute] Guid id)
+            => await managerService.DeleteAsync(id);
 
-        [HttpPost(RoutingConstants.Action)]
+        [HttpGet(RoutingConstants.Action)]
         public async Task<IEnumerable<ManagerViewModel>> GetAll()
             => await managerService.GetAllAsync();
     }
