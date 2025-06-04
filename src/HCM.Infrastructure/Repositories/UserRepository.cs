@@ -79,5 +79,23 @@ namespace HCM.Infrastructure.Repositories
 
             return roles;
         }
+
+        public async Task<RoleEntity> GetRoleAsync(Guid roleId)
+        {
+            var role = await context.Set<RoleEntity>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == roleId);
+
+            return role;
+        }
+
+        public async Task<bool> IsUserInSameRoleAsync(Guid userId, Guid roleId)
+        {
+            var isUserInSameRole = await context.Set<UserRoleEntity>()
+                .AsNoTracking()
+                .AnyAsync(x => x.UserId == userId && x.RoleId == roleId);
+
+            return isUserInSameRole;
+        }
     }
 }

@@ -144,6 +144,9 @@
   <data name="UserAlreadyExist" xml:space="preserve">
     <value>The User already exist.</value>
   </data>
+  <data name="UserInSameRole" xml:space="preserve">
+    <value>The User is already in the same Role.</value>
+  </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>The User was not found.</value>
   </data>

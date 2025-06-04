@@ -13,5 +13,9 @@ namespace HCM.Domain.Interfaces.Repositories
         Task<UserEntity> GetUserByEmailAsync(string email);
 
         Task<IEnumerable<RoleEntity>> GetAllUserRolesAsync();
+
+        Task<RoleEntity> GetRoleAsync(Guid roleId);
+
+        Task<bool> IsUserInSameRoleAsync(Guid userId, Guid roleId);
     }
 }

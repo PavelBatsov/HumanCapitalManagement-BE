@@ -5,6 +5,8 @@ namespace HCM.Domain.Models.Identity
 {
     public class UserModel
     {
+        public Guid Id { get; set; }
+
         public Guid RoleId { get; set; }
 
         [MaxLength(UserConstraints.UserNameMaxLength)]
