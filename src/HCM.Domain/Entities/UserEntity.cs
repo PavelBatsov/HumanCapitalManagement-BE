@@ -28,5 +28,7 @@ namespace HCM.Domain.Entities
         public string LastName { get; set; }
 
         public virtual ICollection<UserRoleEntity> Roles { get; set; }
+
+        public virtual AddressEntity Address { get; set; }
     }
 }

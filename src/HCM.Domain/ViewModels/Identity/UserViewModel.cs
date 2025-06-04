@@ -1,4 +1,6 @@
-﻿namespace HCM.Domain.ViewModels.Identity
+﻿using HCM.Domain.Models.Identity;
+
+namespace HCM.Domain.ViewModels.Identity
 {
     public class UserViewModel
     {
@@ -15,5 +17,7 @@
         public Guid RoleId { get; set; }
 
         public string RoleName { get; set; }
+
+        public AddressModel Address { get; set; }
     }
 }

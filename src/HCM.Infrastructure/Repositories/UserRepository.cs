@@ -21,6 +21,7 @@ namespace HCM.Infrastructure.Repositories
             var user = await context.Set<UserEntity>()
                 .Include(x => x.Roles)
                     .ThenInclude(x => x.Role)
+                .Include(x => x.Address)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return user;
@@ -31,6 +32,7 @@ namespace HCM.Infrastructure.Repositories
             var users = await context.Set<UserEntity>()
                 .Include(x => x.Roles)
                     .ThenInclude(x => x.Role)
+                .Include(x => x.Address)
                 .ToListAsync();
 
             return users;

@@ -23,8 +23,11 @@ namespace HCM.Infrastructure
 
         public DbSet<EmployeeEntity> Employees { get; set; }
 
+        public DbSet<AddressEntity> Addresses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new UserConfigurations());
             builder.ApplyConfiguration(new UserRoleConfigurations());
             builder.ApplyConfiguration(new ManagerConfigurations());
 

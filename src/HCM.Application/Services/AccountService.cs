@@ -7,7 +7,6 @@ using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Localization;
 using HCM.Domain.Models.Identity;
 using HCM.Domain.ViewModels.Identity;
-using Microsoft.AspNet.Identity;
 
 namespace HCM.Application.Services
 {
@@ -67,6 +66,7 @@ namespace HCM.Application.Services
             }
 
             var userId = Guid.NewGuid();
+            var dateTimeUtcNow = DateTime.UtcNow;
             var user = new UserEntity
             {
                 Id = userId,
@@ -75,6 +75,15 @@ namespace HCM.Application.Services
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Password = PasswordHelper.HashPassword(model.Password),
+                Address = model.Address != null ? new AddressEntity
+                {
+                    Address = model.Address.Address ?? string.Empty,
+                    City = model.Address.City ?? string.Empty,
+                    Country = model.Address.Country ?? string.Empty,
+                    PostCode = model.Address.PostCode ?? string.Empty,
+                    CreatedOn = dateTimeUtcNow,
+                    CreatedById = userId
+                } : new AddressEntity(),
                 Roles =
                 [
                     new UserRoleEntity
@@ -84,7 +93,7 @@ namespace HCM.Application.Services
                     }
                 ],
                 CreatedById = userId,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = dateTimeUtcNow
             };
 
             await userRepository.AddAsync(user);
@@ -105,13 +114,26 @@ namespace HCM.Application.Services
                 throw new Exception(Strings.UserAlreadyExist);
             }
 
+            var currentUserId = userHelper.CurrentUserId();
+            var dateTimeUtcNow = DateTime.UtcNow;
+
             user.UserName = model.UserName;
             user.Email = model.Email;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Password = PasswordHelper.HashPassword(model.Password);
-            user.ModifiedById = userHelper.CurrentUserId();
-            user.ModifiedOn = DateTime.UtcNow;
+            user.ModifiedById = currentUserId;
+            user.ModifiedOn = dateTimeUtcNow;
+            
+            if (user.Address != null)
+            {
+                user.Address.Address = model.Address.Address;
+                user.Address.City = model.Address.City;
+                user.Address.Country = model.Address.Country;
+                user.Address.PostCode = model.Address.PostCode;
+                user.Address.ModifiedOn = dateTimeUtcNow;
+                user.Address.ModifiedById = currentUserId;
+            }
 
             await AddUserToRoleAsync(user, model.RoleId);
             await userRepository.SaveAsync();
@@ -138,7 +160,14 @@ namespace HCM.Application.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 RoleId = user.Roles.FirstOrDefault()?.RoleId ?? Guid.Empty,
-                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
+                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty,
+                Address = user.Address != null ? new AddressModel
+                {
+                    Address = user.Address.Address ?? string.Empty,
+                    City = user.Address.City ?? string.Empty,
+                    Country = user.Address.Country ?? string.Empty,
+                    PostCode = user.Address.PostCode ?? string.Empty
+                } : new AddressModel()
             });
 
             return usersViewModel;
@@ -174,11 +203,7 @@ namespace HCM.Application.Services
             {
                 var isUserInSameRole = await userRepository.IsUserInSameRoleAsync(user.Id, roleId);
 
-                if (isUserInSameRole)
-                {
-                    throw new Exception(Strings.UserInSameRole);
-                }
-                else
+                if (!isUserInSameRole)
                 {
                     user.Roles.Clear();
                     user.Roles.Add(new UserRoleEntity

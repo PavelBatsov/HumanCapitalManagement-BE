@@ -142,15 +142,6 @@ namespace HCM.Domain.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The User is already in the same Role..
-        /// </summary>
-        public static string UserInSameRole {
-            get {
-                return ResourceManager.GetString("UserInSameRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The User was not found..
         /// </summary>
         public static string UserNotFound {

@@ -23,5 +23,7 @@ namespace HCM.Domain.Models.Identity
 
         [MaxLength(UserConstraints.LastNameMaxLength)]
         public string LastName { get; set; }
+
+        public AddressModel Address { get; set; }
     }
 }
