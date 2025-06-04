@@ -25,5 +25,8 @@ namespace HCM.Domain.Models.Employee
 
         [Required]
         public EmployeeType EmployeeType { get; set; }
+
+        [Required]
+        public Guid ManagerId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HCM.Domain.Entities;
+using HCM.Domain.Entities.Identity;
 using HCM.Domain.Models.Identity;
 
 namespace HCM.Domain.Interfaces.Repositories
@@ -10,5 +11,7 @@ namespace HCM.Domain.Interfaces.Repositories
         Task<bool> IsUserExistsAsync(string email);
 
         Task<UserEntity> GetUserByEmailAsync(string email);
+
+        Task<IEnumerable<RoleEntity>> GetAllUserRolesAsync();
     }
 }

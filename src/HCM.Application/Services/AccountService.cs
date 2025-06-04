@@ -100,5 +100,33 @@ namespace HCM.Application.Services
         {
             return await tokenHandlerService.RefreshTokenAsync(model);
         }
+
+        public async Task<IEnumerable<UserViewModel>> GetAllAsync()
+        {
+            var users = await userRepository.GetAllAsync();
+            var usersViewModel = users.Select(user => new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
+            });
+
+            return usersViewModel;
+        }
+
+        public async Task<IEnumerable<RoleViewModel>> GetAllUserRolesAsync()
+        {
+            var roles = await userRepository.GetAllUserRolesAsync();
+            var rolesViewModel = roles.Select(role => new RoleViewModel
+            {
+                Id = role.Id,
+                Name = role.Name,
+            });
+
+            return rolesViewModel;
+        }
     }
 }

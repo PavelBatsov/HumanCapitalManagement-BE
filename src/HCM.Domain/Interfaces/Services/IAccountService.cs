@@ -14,5 +14,9 @@ namespace HCM.Domain.Interfaces.Services
         Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model);
 
         Task LogoutAsync(RefreshTokenModel model);
+
+        Task<IEnumerable<UserViewModel>> GetAllAsync();
+
+        Task<IEnumerable<RoleViewModel>> GetAllUserRolesAsync();
     }
 }

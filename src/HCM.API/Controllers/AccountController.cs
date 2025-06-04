@@ -24,7 +24,7 @@ namespace HCM.API.Controllers
 
         [AllowAnonymous]
         [HttpPost(RoutingConstants.Action)]
-        public async Task Register(UserModel model)
+        public async Task Register([FromBody] UserModel model)
            => await accountService.RegisterAsync(model);
 
         [HttpPost(RoutingConstants.Action)]
@@ -39,5 +39,15 @@ namespace HCM.API.Controllers
         [HttpPost(RoutingConstants.Action)]
         public async Task Logout(RefreshTokenModel model)
             => await accountService.LogoutAsync(model);
+
+        [AllowAnonymous] // TEMPORARY: Remove this when the API is secured
+        [HttpGet(RoutingConstants.Action)]
+        public async Task<IEnumerable<UserViewModel>> GetAll()
+           => await accountService.GetAllAsync();
+
+        [AllowAnonymous] // TEMPORARY: Remove this when the API is secured
+        [HttpGet(RoutingConstants.Action)]
+        public async Task<IEnumerable<RoleViewModel>> GetAllUserRoles()
+           => await accountService.GetAllUserRolesAsync();
     }
 }

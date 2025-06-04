@@ -16,6 +16,16 @@ namespace HCM.Infrastructure.Repositories
             this.context = context;
         }
 
+        public async override Task<IEnumerable<UserEntity>> GetAllAsync()
+        {
+            var users = await context.Set<UserEntity>()
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
+                .ToListAsync();
+
+            return users;
+        }
+
         public async Task<UserEntity> GetUserByEmailAsync(string email)
         {
             var user = await context.Set<UserEntity>()
@@ -59,6 +69,15 @@ namespace HCM.Infrastructure.Repositories
                 .AnyAsync(x => x.Email == email);
 
             return isUserExist;
+        }
+
+        public async Task<IEnumerable<RoleEntity>> GetAllUserRolesAsync()
+        {
+            var roles = await context.Set<RoleEntity>()
+                .AsNoTracking()
+                .ToListAsync();
+
+            return roles;
         }
     }
 }

@@ -32,7 +32,6 @@ namespace HCM.Application.Services
                 throw new Exception(Strings.EmployeeAlreadyExists);
             }
 
-            var currentUserId = userHelper.CurrentUserId();
             var employee = new EmployeeEntity
             {
                 FirstName = model.FirstName,
@@ -40,10 +39,10 @@ namespace HCM.Application.Services
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
-                CreatedById = currentUserId,
+                CreatedById = userHelper.CurrentUserId(),
                 CreatedOn = DateTime.UtcNow,
                 EmployeeType = model.EmployeeType,
-                ManagerId = currentUserId
+                ManagerId = model.ManagerId
             };
 
             await employeeRepository.AddAsync(employee);
@@ -72,6 +71,7 @@ namespace HCM.Application.Services
             employee.ModifiedOn = DateTime.UtcNow;
             employee.ModifiedById = userHelper.CurrentUserId();
             employee.EmployeeType = model.EmployeeType;
+            employee.ManagerId = model.ManagerId;
 
             await employeeRepository.SaveAsync();
 
