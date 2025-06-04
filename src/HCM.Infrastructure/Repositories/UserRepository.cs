@@ -16,6 +16,16 @@ namespace HCM.Infrastructure.Repositories
             this.context = context;
         }
 
+        public async override Task<UserEntity> GetAsync(Guid id)
+        {
+            var user = await context.Set<UserEntity>()
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return user;
+        }
+
         public async override Task<IEnumerable<UserEntity>> GetAllAsync()
         {
             var users = await context.Set<UserEntity>()

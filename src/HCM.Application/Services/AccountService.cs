@@ -91,7 +91,7 @@ namespace HCM.Application.Services
             await userRepository.SaveAsync();
         }
 
-        public async Task<UserViewModel> UpdateAccountAsync(UserModel model)
+        public async Task UpdateAccountAsync(UserModel model)
         {
             var user = await userRepository.GetAsync(model.Id)
                 ?? throw new Exception(Strings.UserNotFound);
@@ -114,16 +114,7 @@ namespace HCM.Application.Services
             user.ModifiedOn = DateTime.UtcNow;
 
             await AddUserToRoleAsync(user, model.RoleId);
-
-            return new UserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
-            };
+            await userRepository.SaveAsync();
         }
 
         public async Task LogoutAsync(RefreshTokenModel model)
