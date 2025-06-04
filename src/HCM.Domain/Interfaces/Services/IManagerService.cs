@@ -7,7 +7,7 @@ namespace HCM.Domain.Interfaces.Services
     {
         Task CreateAsync(ManagerModel model);
 
-        Task<ManagerViewModel> UpdateAsync(ManagerModel model);
+        Task UpdateAsync(ManagerModel model);
 
         Task DeleteAsync(Guid managerId);
 

@@ -24,7 +24,7 @@ namespace HCM.API.Controllers
 
         [Authorize(Policy = RoleConstants.Admin)]
         [HttpPut(RoutingConstants.Action)]
-        public async Task<ManagerViewModel> Update([FromForm] ManagerModel model)
+        public async Task Update([FromForm] ManagerModel model)
             => await managerService.UpdateAsync(model);
 
         [Authorize(Policy = RoleConstants.Admin)]

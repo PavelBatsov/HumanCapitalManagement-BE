@@ -49,7 +49,7 @@ namespace HCM.Application.Services
             await managerRepository.SaveAsync();
         }
 
-        public async Task<ManagerViewModel> UpdateAsync(ManagerModel model)
+        public async Task UpdateAsync(ManagerModel model)
         {
             var manager = await managerRepository.GetAsync(model.Id)
                 ?? throw new Exception(Strings.ManagerNotFound);
@@ -76,17 +76,6 @@ namespace HCM.Application.Services
             manager.ManagerType = model.ManagerType;
 
             await managerRepository.SaveAsync();
-
-            return new ManagerViewModel
-            {
-                Id = manager.Id,
-                Email = manager.Email,
-                FirstName = manager.FirstName,
-                LastName = manager.LastName,
-                PhoneNumber = manager.PhoneNumber,
-                Address = manager.Address,
-                ManagerType = manager.ManagerType
-            };
         }
 
         public async Task DeleteAsync(Guid managerId)
@@ -109,7 +98,7 @@ namespace HCM.Application.Services
                 Email = m.Email,
                 PhoneNumber = m.PhoneNumber,
                 Address = m.Address,
-                ManagerType = m.ManagerType
+                ManagerType = m.ManagerType,
             });
 
             return managersViewModel;

@@ -1,4 +1,5 @@
-﻿using HCM.Domain.Constants;
+﻿using HCM.Application.Services;
+using HCM.Domain.Constants;
 using HCM.Domain.Interfaces.Services;
 using HCM.Domain.Models.Identity;
 using HCM.Domain.ViewModels.Identity;
@@ -48,5 +49,9 @@ namespace HCM.API.Controllers
         [HttpGet(RoutingConstants.Action)]
         public async Task<IEnumerable<RoleViewModel>> GetAllUserRoles()
            => await accountService.GetAllUserRolesAsync();
+
+        [HttpDelete(RoutingConstants.ActionId)]
+        public async Task Delete([FromRoute] Guid id)
+            => await accountService.DeleteAsync(id);
     }
 }

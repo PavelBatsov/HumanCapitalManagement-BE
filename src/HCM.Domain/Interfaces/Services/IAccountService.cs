@@ -18,5 +18,7 @@ namespace HCM.Domain.Interfaces.Services
         Task<IEnumerable<UserViewModel>> GetAllAsync();
 
         Task<IEnumerable<RoleViewModel>> GetAllUserRolesAsync();
+
+        Task DeleteAsync(Guid userId);
     }
 }

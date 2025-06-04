@@ -18,6 +18,8 @@ namespace HCM.Domain.ViewModels.Manager
 
         public ManagerType ManagerType { get; set; }
 
+        public string ManagerName => $"{FirstName} {LastName}";
+
         public Guid EmployeeId { get; set; }
     }
 }

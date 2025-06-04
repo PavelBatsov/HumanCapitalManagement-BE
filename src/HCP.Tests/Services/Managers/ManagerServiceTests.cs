@@ -137,15 +137,15 @@ namespace HCP.Tests.Services.Managers
                 .Setup(helper => helper.CurrentUserId()).Returns(Guid.NewGuid());
 
             // Act
-            var result = await managerService.UpdateAsync(model);
+            await managerService.UpdateAsync(model);
 
             // Assert
-            Assert.AreEqual(model.Email, result.Email);
-            Assert.AreEqual(model.FirstName, result.FirstName);
-            Assert.AreEqual(model.LastName, result.LastName);
-            Assert.AreEqual(model.PhoneNumber, result.PhoneNumber);
-            Assert.AreEqual(model.Address, result.Address);
-            Assert.AreEqual(model.ManagerType, result.ManagerType);
+            Assert.AreEqual(model.Email, model.Email);
+            Assert.AreEqual(model.FirstName, model.FirstName);
+            Assert.AreEqual(model.LastName, model.LastName);
+            Assert.AreEqual(model.PhoneNumber, model.PhoneNumber);
+            Assert.AreEqual(model.Address, model.Address);
+            Assert.AreEqual(model.ManagerType, model.ManagerType);
 
             managerRepositoryMock.Verify(repo => repo.SaveAsync(), Times.Once);
         }

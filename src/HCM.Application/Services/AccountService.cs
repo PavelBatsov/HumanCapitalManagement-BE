@@ -137,6 +137,7 @@ namespace HCM.Application.Services
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                RoleId = user.Roles.FirstOrDefault()?.RoleId ?? Guid.Empty,
                 RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
             });
 
@@ -153,6 +154,15 @@ namespace HCM.Application.Services
             });
 
             return rolesViewModel;
+        }
+
+        public async Task DeleteAsync(Guid userId)
+        {
+            var user = await userRepository.GetAsync(userId)
+                ?? throw new Exception(Strings.UserNotFound);
+
+            userRepository.Delete(user);
+            await userRepository.SaveAsync();
         }
 
         private async Task AddUserToRoleAsync(UserEntity user, Guid roleId)

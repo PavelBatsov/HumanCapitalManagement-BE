@@ -107,7 +107,8 @@ namespace HCM.Application.Services
                 Email = e.Email,
                 PhoneNumber = e.PhoneNumber,
                 Address = e.Address,
-                EmployeeType = e.EmployeeType
+                EmployeeType = e.EmployeeType,
+                ManagerId = e.ManagerId
             });
 
             return employeeViewModel;

@@ -6,6 +6,8 @@ namespace HCM.Domain.ViewModels.Employee
     {
         public Guid Id { get; set; }
 
+        public Guid ManagerId { get; set; }
+
         public string Email { get; set; }
 
         public string FirstName { get; set; }
@@ -17,5 +19,7 @@ namespace HCM.Domain.ViewModels.Employee
         public string Address { get; set; }
 
         public EmployeeType EmployeeType { get; set; }
+
+        public string EmployeeName => $"{FirstName} {LastName}";
     }
 }
