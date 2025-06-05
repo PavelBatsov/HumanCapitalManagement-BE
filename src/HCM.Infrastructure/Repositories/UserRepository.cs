@@ -30,6 +30,7 @@ namespace HCM.Infrastructure.Repositories
         public async override Task<IEnumerable<UserEntity>> GetAllAsync()
         {
             var users = await context.Set<UserEntity>()
+                .AsNoTracking()
                 .Include(x => x.Roles)
                     .ThenInclude(x => x.Role)
                 .Include(x => x.Address)

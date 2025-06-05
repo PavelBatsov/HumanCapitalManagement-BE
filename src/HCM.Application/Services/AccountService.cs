@@ -38,21 +38,12 @@ namespace HCM.Application.Services
                 throw new Exception(Strings.InvalidCredentials);
             }
 
-            var token = tokenHandlerService.GenerateTokenAsync(user);
-            var userViewModel = new UserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
-            };
+            var token = await tokenHandlerService.GenerateTokenAsync(user);
 
             return new LoginViewModel
             {
-                User = userViewModel,
-                Token = await token
+                User = EntityToViewModel(user),
+                Token = token
             };
         }
 
@@ -65,6 +56,124 @@ namespace HCM.Application.Services
                 throw new Exception(Strings.UserAlreadyExist);
             }
 
+            var user = ModelToEntityCreate(model);
+
+            await userRepository.AddAsync(user);
+            await userRepository.SaveAsync();
+        }
+
+        public async Task UpdateAccountAsync(UserModel model)
+        {
+            var user = await userRepository.GetAsync(model.Id)
+                ?? throw new Exception(Strings.UserNotFound);
+
+            var isUserAlreadyExists = userRepository
+                .FindBy(x => x.Email == model.Email && x.Id != model.Id)
+                .Any();
+
+            if (isUserAlreadyExists)
+            {
+                throw new Exception(Strings.UserAlreadyExist);
+            }
+
+            ModelToEntityUpdate(user, model);
+            await AddUserToRoleAsync(user, model.RoleId);
+            await userRepository.SaveAsync();
+        }
+
+        public async Task LogoutAsync(RefreshTokenModel model)
+        {
+            await tokenHandlerService.RevokeRefreshTokenAsync(model);
+        }
+
+        public async Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model)
+        {
+            return await tokenHandlerService.RefreshTokenAsync(model);
+        }
+
+        public async Task<IEnumerable<UserViewModel>> GetAllAsync()
+        {
+            return await EntityToUserViewModelAsync();
+        }
+
+        public async Task<IEnumerable<RoleViewModel>> GetAllUserRolesAsync()
+        {
+            return await EntityToRoleViewModelAsync();
+        }
+
+        public async Task DeleteAsync(Guid userId)
+        {
+            var user = await userRepository.GetAsync(userId)
+                ?? throw new Exception(Strings.UserNotFound);
+
+            userRepository.Delete(user);
+            await userRepository.SaveAsync();
+        }
+
+        #region Private Methods
+
+        private async Task AddUserToRoleAsync(UserEntity user, Guid roleId)
+        {
+            var role = await userRepository.GetRoleAsync(roleId)
+                ?? throw new Exception(Strings.CannotFindUserRole);
+
+            if (role != null)
+            {
+                var isUserInSameRole = await userRepository.IsUserInSameRoleAsync(user.Id, roleId);
+
+                if (!isUserInSameRole)
+                {
+                    user.Roles.Clear();
+                    user.Roles.Add(new UserRoleEntity
+                    {
+                        UserId = user.Id,
+                        RoleId = role.Id
+                    });
+                }
+            }
+        }
+
+        private static UserViewModel EntityToViewModel(UserEntity user)
+        {
+            var userViewModel = new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty
+            };
+
+            return userViewModel;
+        }
+
+        private async Task<IEnumerable<UserViewModel>> EntityToUserViewModelAsync()
+        {
+            var users = await userRepository.GetAllAsync();
+            var usersViewModel = users.Select(user => new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                RoleId = user.Roles.FirstOrDefault()?.RoleId ?? Guid.Empty,
+                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty,
+                Address = user.Address != null ? new AddressModel
+                {
+                    Address = user.Address.Address ?? string.Empty,
+                    City = user.Address.City ?? string.Empty,
+                    Country = user.Address.Country ?? string.Empty,
+                    PostCode = user.Address.PostCode ?? string.Empty
+                } : new AddressModel()
+            });
+
+            return usersViewModel;
+        }
+
+        private static UserEntity ModelToEntityCreate(UserModel model)
+        {
             var userId = Guid.NewGuid();
             var dateTimeUtcNow = DateTime.UtcNow;
             var user = new UserEntity
@@ -96,24 +205,11 @@ namespace HCM.Application.Services
                 CreatedOn = dateTimeUtcNow
             };
 
-            await userRepository.AddAsync(user);
-            await userRepository.SaveAsync();
+            return user;
         }
 
-        public async Task UpdateAccountAsync(UserModel model)
+        private void ModelToEntityUpdate(UserEntity user, UserModel model)
         {
-            var user = await userRepository.GetAsync(model.Id)
-                ?? throw new Exception(Strings.UserNotFound);
-
-            var isUserAlreadyExists = userRepository
-                .FindBy(x => x.Email == model.Email && x.Id != model.Id)
-                .Any();
-
-            if (isUserAlreadyExists)
-            {
-                throw new Exception(Strings.UserAlreadyExist);
-            }
-
             var currentUserId = userHelper.CurrentUserId();
             var dateTimeUtcNow = DateTime.UtcNow;
 
@@ -124,7 +220,7 @@ namespace HCM.Application.Services
             user.Password = PasswordHelper.HashPassword(model.Password);
             user.ModifiedById = currentUserId;
             user.ModifiedOn = dateTimeUtcNow;
-            
+
             if (user.Address != null)
             {
                 user.Address.Address = model.Address.Address;
@@ -134,46 +230,9 @@ namespace HCM.Application.Services
                 user.Address.ModifiedOn = dateTimeUtcNow;
                 user.Address.ModifiedById = currentUserId;
             }
-
-            await AddUserToRoleAsync(user, model.RoleId);
-            await userRepository.SaveAsync();
         }
 
-        public async Task LogoutAsync(RefreshTokenModel model)
-        {
-            await tokenHandlerService.RevokeRefreshTokenAsync(model);
-        }
-
-        public async Task<TokenModel> RefreshTokenAsync(RefreshTokenModel model)
-        {
-            return await tokenHandlerService.RefreshTokenAsync(model);
-        }
-
-        public async Task<IEnumerable<UserViewModel>> GetAllAsync()
-        {
-            var users = await userRepository.GetAllAsync();
-            var usersViewModel = users.Select(user => new UserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                RoleId = user.Roles.FirstOrDefault()?.RoleId ?? Guid.Empty,
-                RoleName = user.Roles.FirstOrDefault()?.Role.Name ?? string.Empty,
-                Address = user.Address != null ? new AddressModel
-                {
-                    Address = user.Address.Address ?? string.Empty,
-                    City = user.Address.City ?? string.Empty,
-                    Country = user.Address.Country ?? string.Empty,
-                    PostCode = user.Address.PostCode ?? string.Empty
-                } : new AddressModel()
-            });
-
-            return usersViewModel;
-        }
-
-        public async Task<IEnumerable<RoleViewModel>> GetAllUserRolesAsync()
+        private async Task<IEnumerable<RoleViewModel>> EntityToRoleViewModelAsync()
         {
             var roles = await userRepository.GetAllUserRolesAsync();
             var rolesViewModel = roles.Select(role => new RoleViewModel
@@ -185,34 +244,6 @@ namespace HCM.Application.Services
             return rolesViewModel;
         }
 
-        public async Task DeleteAsync(Guid userId)
-        {
-            var user = await userRepository.GetAsync(userId)
-                ?? throw new Exception(Strings.UserNotFound);
-
-            userRepository.Delete(user);
-            await userRepository.SaveAsync();
-        }
-
-        private async Task AddUserToRoleAsync(UserEntity user, Guid roleId)
-        {
-            var role = await userRepository.GetRoleAsync(roleId)
-                ?? throw new Exception(Strings.CannotFindUserRole);
-
-            if (role != null)
-            {
-                var isUserInSameRole = await userRepository.IsUserInSameRoleAsync(user.Id, roleId);
-
-                if (!isUserInSameRole)
-                {
-                    user.Roles.Clear();
-                    user.Roles.Add(new UserRoleEntity
-                    {
-                        UserId = user.Id,
-                        RoleId = role.Id
-                    });
-                }
-            }
-        }
+        #endregion Private Methods
     }
 }

@@ -7,7 +7,7 @@ namespace HCM.Domain.Interfaces.Services
     {
         Task CreateAsync(EmployeeModel model);
 
-        Task<EmployeeViewModel> UpdateAsync(EmployeeModel model);
+        Task UpdateAsync(EmployeeModel model);
 
         Task DeleteAsync(Guid employeeId);
 

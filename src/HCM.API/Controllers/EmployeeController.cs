@@ -24,7 +24,7 @@ namespace HCM.API.Controllers
 
         [Authorize(Policy = RoleConstants.Manager)]
         [HttpPut(RoutingConstants.Action)]
-        public async Task<EmployeeViewModel> Update([FromForm] EmployeeModel model)
+        public async Task Update([FromForm] EmployeeModel model)
             => await employeeService.UpdateAsync(model);
 
         [Authorize(Policy = RoleConstants.Manager)]

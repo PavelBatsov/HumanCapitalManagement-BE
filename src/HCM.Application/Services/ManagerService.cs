@@ -1,5 +1,4 @@
 ﻿using HCM.Domain.Entities;
-using HCM.Domain.Helpers;
 using HCM.Domain.Interfaces;
 using HCM.Domain.Interfaces.Repositories;
 using HCM.Domain.Interfaces.Services;
@@ -33,17 +32,7 @@ namespace HCM.Application.Services
                 throw new Exception(Strings.ManagerAlreadyExists);
             }
 
-            var manager = new ManagerEntity
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                CreatedById = userHelper.CurrentUserId(),
-                CreatedOn = DateTime.UtcNow,
-                ManagerType = model.ManagerType
-            };
+            var manager = ModelToEntityCreate(model);
 
             await managerRepository.AddAsync(manager);
             await managerRepository.SaveAsync();
@@ -63,17 +52,7 @@ namespace HCM.Application.Services
                 throw new Exception(string.Format(Strings.ManagerWithThatEmailExist, model.Email));
             }
 
-            var dateTimeUtcNow = DateTime.UtcNow;
-
-            manager.FirstName = model.FirstName;
-            manager.LastName = model.LastName;
-            manager.Email = model.Email;
-            manager.PhoneNumber = model.PhoneNumber;
-            manager.Address = model.Address;
-            manager.CreatedOn = dateTimeUtcNow;
-            manager.ModifiedById = userHelper.CurrentUserId();
-            manager.ModifiedOn = dateTimeUtcNow;
-            manager.ManagerType = model.ManagerType;
+            ModelToEntityUpdate(manager, model);
 
             await managerRepository.SaveAsync();
         }
@@ -89,6 +68,45 @@ namespace HCM.Application.Services
 
         public async Task<IEnumerable<ManagerViewModel>> GetAllAsync()
         {
+            return await EntityToViewModelAsync();
+        }
+
+        #region Private Methods
+
+        private ManagerEntity ModelToEntityCreate(ManagerModel model)
+        {
+            var manager = new ManagerEntity
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Address = model.Address,
+                CreatedById = userHelper.CurrentUserId(),
+                CreatedOn = DateTime.UtcNow,
+                ManagerType = model.ManagerType
+            };
+
+            return manager;
+        }
+
+        private void ModelToEntityUpdate(ManagerEntity manager, ManagerModel model)
+        {
+            var dateTimeUtcNow = DateTime.UtcNow;
+
+            manager.FirstName = model.FirstName;
+            manager.LastName = model.LastName;
+            manager.Email = model.Email;
+            manager.PhoneNumber = model.PhoneNumber;
+            manager.Address = model.Address;
+            manager.CreatedOn = dateTimeUtcNow;
+            manager.ModifiedById = userHelper.CurrentUserId();
+            manager.ModifiedOn = dateTimeUtcNow;
+            manager.ManagerType = model.ManagerType;
+        }
+
+        private async Task<IEnumerable<ManagerViewModel>> EntityToViewModelAsync()
+        {
             var managers = await managerRepository.GetAllAsync();
             var managersViewModel = managers.Select(m => new ManagerViewModel
             {
@@ -103,5 +121,7 @@ namespace HCM.Application.Services
 
             return managersViewModel;
         }
+
+        #endregion Private Methods
     }
 }

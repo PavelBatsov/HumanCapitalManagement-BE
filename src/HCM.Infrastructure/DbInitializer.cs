@@ -4,11 +4,9 @@ using HCM.Domain.Entities;
 using HCM.Domain.Entities.Identity;
 using HCM.Domain.Helpers;
 using HCM.Domain.Interfaces.Repositories;
-using HCM.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace HCM.Infrastructure
 {
