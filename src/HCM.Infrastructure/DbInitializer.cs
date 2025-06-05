@@ -69,6 +69,7 @@ namespace HCM.Infrastructure
             var userId = Guid.NewGuid();
             var email = userConfiguration.Email;
             var user = userRepository.GetUserByEmailAsync(email).Result;
+            var dateTimeUtcNow = DateTime.UtcNow;
 
             if (user == null)
             {
@@ -88,8 +89,17 @@ namespace HCM.Infrastructure
                             RoleId = adminRoleId
                         }
                     ],
+                    Address = new AddressEntity
+                    {
+                        Address = userConfiguration.Address,
+                        City = userConfiguration.City,
+                        Country = userConfiguration.Country,
+                        PostCode = userConfiguration.PostCode,
+                        CreatedOn = dateTimeUtcNow,
+                        CreatedById = userId
+                    },
                     CreatedById = userId,
-                    CreatedOn = DateTime.UtcNow,
+                    CreatedOn = dateTimeUtcNow,
                 };
 
                 userRepository.Add(user);
